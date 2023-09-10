@@ -81,7 +81,7 @@ struct MatchLiveScoreLiveActivity: Widget {
             } minimal: {
                 Text("⚽")
             }
-            .widgetURL(URL(string: "http://www.apple.com"))
+            .widgetURL(URL(string: "https://markwarriors.github.io/"))
             .keylineTint(Color.red)
         }
     }

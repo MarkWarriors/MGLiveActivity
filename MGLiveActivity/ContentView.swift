@@ -13,15 +13,23 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
-            Text("Activity ID:")
-            Text("\(activityManager.activityID ?? "-")")
+            VStack(spacing: 8) {
+                Text("Activity ID:")
+                    .font(.title3)
+                Text("\(activityManager.activityID ?? "-")")
+                    .font(.caption2)
+                Text("Activity Token:")
+                    .font(.title3)
+                Text("\(activityManager.activityToken ?? "-")")
+                    .font(.caption2)
+            }
             Spacer()
             
             if (activityManager.activityID?.isEmpty == false) {
                 VStack {
                 Button("UPDATE RANDOM SCORE FOR LIVE ACTIVITY") {
                     Task {
-                        await activityManager.start()
+                        await activityManager.updateActivityRandomly()
                     }
                 }
                 .font(.headline)

@@ -9,8 +9,6 @@ import ActivityKit
 import WidgetKit
 import SwiftUI
 
-
-
 struct MatchLiveScoreLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: MatchLiveScoreAttributes.self) { context in

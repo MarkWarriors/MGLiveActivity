@@ -41,11 +41,9 @@ final class ActivityManager: ObservableObject {
         }
         await MainActor.run { activityID = activity.id }
         
-        print(activity.id)
-        
         for await data in activity.pushTokenUpdates {
             let token = data.map {String(format: "%02x", $0)}.joined()
-            print("Activity token: \(token)")
+            print("ACTIVITY TOKEN:\n\(token)")
             await MainActor.run { activityToken = token }
             // HERE SEND THE TOKEN TO THE SERVER
         }
@@ -76,7 +74,10 @@ final class ActivityManager: ObservableObject {
             dismissalPolicy: .immediate
         )
         
-        await MainActor.run { self.activityID = nil }
+        await MainActor.run {
+            self.activityID = nil
+            self.activityToken = nil
+        }
     }
     
     func cancelAllRunningActivities() async {
@@ -87,7 +88,7 @@ final class ActivityManager: ObservableObject {
             
             await activity.end(
                 ActivityContent(state: initialContentState, staleDate: Date()),
-                dismissalPolicy: .immediate
+                dismissalPolicy: .default
             )
         }
         

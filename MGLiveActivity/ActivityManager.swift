@@ -41,6 +41,8 @@ final class ActivityManager: ObservableObject {
         }
         await MainActor.run { activityID = activity.id }
         
+        print(activity.id)
+        
         for await data in activity.pushTokenUpdates {
             let token = data.map {String(format: "%02x", $0)}.joined()
             print("Activity token: \(token)")

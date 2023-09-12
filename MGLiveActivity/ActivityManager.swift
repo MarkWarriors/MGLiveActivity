@@ -28,7 +28,8 @@ final class ActivityManager: ObservableObject {
         let initialContentState = ActivityContent(state: MatchLiveScoreAttributes.ContentState(homeTeamScore: 0,
                                                                                                awayTeamScore: 0,
                                                                                                lastEvent: "Match Start"),
-                                                  staleDate: nil)
+                                                  staleDate: nil,
+                                                  relevanceScore: 0)
         
         let activity = try? Activity.request(
             attributes: attributes,
@@ -36,9 +37,7 @@ final class ActivityManager: ObservableObject {
             pushType: .token
         )
         
-        guard let activity = activity else {
-            return
-        }
+        guard let activity = activity else { return }
         await MainActor.run { activityID = activity.id }
         
         for await data in activity.pushTokenUpdates {
@@ -57,7 +56,14 @@ final class ActivityManager: ObservableObject {
         let newRandomContentState = MatchLiveScoreAttributes.ContentState(homeTeamScore: Int.random(in: 1...9),
                                                                           awayTeamScore: Int.random(in: 1...9),
                                                                           lastEvent: "Something random happened!")
-        await runningActivity.update(using: newRandomContentState)
+        DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 2) {
+            Task {
+                await runningActivity.update(using: newRandomContentState,
+                                             alertConfiguration: AlertConfiguration.init(title: "Title",
+                                                                                         body: "Body",
+                                                                                         sound: .default))
+            }
+        }
     }
     
     func endActivity() async {
@@ -68,7 +74,7 @@ final class ActivityManager: ObservableObject {
         let initialContentState = MatchLiveScoreAttributes.ContentState(homeTeamScore: 0,
                                                                         awayTeamScore: 0,
                                                                         lastEvent: "Match Start")
-
+        
         await runningActivity.end(
             ActivityContent(state: initialContentState, staleDate: Date.distantFuture),
             dismissalPolicy: .immediate
